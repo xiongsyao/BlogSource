@@ -1,4 +1,29 @@
-baseURL = "http://example.org/"
+baseURL = "https://xiongsyao.github.io/"
 languageCode = "zh-CH"
-title = "My New Hugo Site"
+title = "Matrix"
 theme = "maupassant-hugo"
+
+preserveTaxonomyNames = true
+disablePathToLower = true
+
+
+[author]
+    name = "matrix"
+
+[params]
+    author = "matrix"
+    keywords = "golang,python"
+
+[menu]
+
+  [[menu.main]]
+    identifier = "archives"
+    name = "归档"
+    url = "/archives/"
+    weight = 3
+
+  [[menu.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 4
