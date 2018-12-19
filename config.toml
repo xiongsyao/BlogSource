@@ -14,6 +14,12 @@ disablePathToLower = true
     author = "matrix"
     keywords = "golang,python"
 
+[params.utteranc]
+    enable = true
+    repo = "xiongsyao/comments"
+    issueTerm = "pathname"
+    theme = "github-light"
+
 [menu]
 
   [[menu.main]]
