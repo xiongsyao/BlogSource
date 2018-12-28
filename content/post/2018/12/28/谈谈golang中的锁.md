@@ -69,7 +69,7 @@ func main() {
 
 通过`goroutine`，原来10s的计算仅需1s。在上面的例子中，我们并发了10个goroutine，他们都对同一资源`count`进行了操作, 其实这里已经出问题了， 但是并发数太少，所以不容易观测出问题。
 
-做一下尝试，将for循环中的n改为1000，多执行几次，发现运行结果多不是1000。问题出在这里`count++`其中应该拆分为`temp := count; count = temp + 1`, 当在获取temp=99之后，可能其他协程已经对count完成了累加操作，count变为100, 但当前协程依旧执行`count=99+1`，这就导致某些提交没有生效。
+做一下尝试，将for循环中的n改为1000，多执行几次，发现运行结果可能为`945 965 948`。问题出在这里`count++`其中应该拆分为`temp := count; count = temp + 1`, 当在获取temp=99之后，可能其他协程已经对count完成了累加操作，count变为100, 但当前协程依旧执行`count=99+1`，这就导致某些提交没有生效。
 
 怎么避免这个问题呢？我们需要对某一资源的访问做限制，也就是当某一协程在访问某一资源时，要限制其他协程访问。简单来说，就是`加锁`。
 ``` go
@@ -86,22 +86,21 @@ var mux sync.Mutex
 var wg sync.WaitGroup
 
 func doCount() {
-	time.Sleep(1 * time.Second)
+    time.Sleep(1 * time.Second)
+    // 加锁
 	mux.Lock()
-	count++
+    count++
+    // 释放锁
 	mux.Unlock()
-	// 通知协程执行完毕
 	wg.Done()
 }
 
 func main() {
     n := 1000
 	for i := 0; i < n; i++ {
-		// 记录新增一个协程
 		wg.Add(1)
 		go doCount()
 	}
-	// 等待所有协程执行完毕
 	wg.Wait()
 	fmt.Println(count)
 }
@@ -112,6 +111,7 @@ func main() {
 在这个例子中，对锁的应用简陋，在实际运用中，需要注意以下两点: 
 + 一个应用中会存在多把锁，不应该用全局变量声明锁，最好能与相关的资源封装进用一结构体内。
 + 假如某一处在持有锁的时候出异常了，导致没办法释放锁，影响其他协程的运行，所以在可能出问题的函数内，使用`defer`确保函数返回前，锁被正常释放。
++ 尽量缩减锁的区域，例如在上例中，假如在`time.Sleep(1 * time.Second)`之前就加锁，导致所有协程都阻塞。原则上，只需要可能引发竞态的地方加锁。
 
 采用以上建议，可以重构代码为:
 ``` go
@@ -124,22 +124,22 @@ import (
 )
 
 type Counter struct {
-	count int
-	mu    sync.Mutex
+	count int          // 记录计数
+	mu    sync.Mutex   // 当前资源的锁
 }
 
 func (c *Counter) Add(num int) {
-	c.mu.Lock()
+    // 加锁
+    c.mu.Lock()
 	c.count = c.count + num
-	c.mu.Unlock()
+    // 释放锁
+    c.mu.Unlock()
 }
 
 func doCount(counter *Counter, wg *sync.WaitGroup) {
-	// 记录新增一个协程
 	wg.Add(1)
 	time.Sleep(1 * time.Second)
 	counter.Add(1)
-	// 通知协程执行完毕
 	wg.Done()
 }
 
@@ -149,8 +149,9 @@ func main() {
 	for i := 0; i < 1000; i++ {
 		go doCount(counter, wg)
 	}
-	// 等待所有协程执行完毕
 	wg.Wait()
 	fmt.Println(counter.count)
 }
 ```
+
+到这里， 就介绍完了go中的互斥锁。等等…也就是说，还有另一种锁？那是当然啦。考虑一种使用场景，较少的协程对某一资源执行`写`操作，而更多的协程执行`读`操作，采用`sync.Mutex`即互斥锁，会导致每一次对资源的访问，无论是读还是写，都会阻塞。
