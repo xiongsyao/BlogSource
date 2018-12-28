@@ -25,10 +25,10 @@ var count int
 
 // 10秒后会看到打印出10
 func main() {
-	for i := 0; i < 10; i++ {
-		do()
-	}
-	fmt.Println(count)
+    for i := 0; i < 10; i++ {
+        do()
+    }
+    fmt.Println(count)
 }
 ```
 
@@ -46,10 +46,10 @@ var count int
 var wg sync.WaitGroup
 
 func do() {
-	time.Sleep(1 * time.Second)
-	count++
-	// 通知协程执行完毕
-	wg.Done()
+    time.Sleep(1 * time.Second)
+    count++
+    // 通知协程执行完毕
+    wg.Done()
 }
 
 // 1秒后打印出10（不保证一定为0)
@@ -88,11 +88,11 @@ var wg sync.WaitGroup
 func doCount() {
     time.Sleep(1 * time.Second)
     // 加锁
-	mux.Lock()
+    mux.Lock()
     count++
     // 释放锁
-	mux.Unlock()
-	wg.Done()
+    mux.Unlock()
+    wg.Done()
 }
 
 func main() {
@@ -100,9 +100,9 @@ func main() {
 	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go doCount()
-	}
-	wg.Wait()
-	fmt.Println(count)
+    }
+    wg.Wait()
+    fmt.Println(count)
 }
 ```
 
