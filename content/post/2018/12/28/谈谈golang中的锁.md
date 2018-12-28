@@ -17,18 +17,18 @@ import (
 )
 
 func do() {
-    time.Sleep(1 * time.Second)
-    count++
+	time.Sleep(1 * time.Second)
+	count++
 }
 
 var count int
 
 // 10秒后会看到打印出10
 func main() {
-    for i := 0; i < 10; i++ {
-        do()
-    }
-    fmt.Println(count)
+	for i := 0; i < 10; i++ {
+		do()
+	}
+	fmt.Println(count)
 }
 ```
 
@@ -46,15 +46,15 @@ var count int
 var wg sync.WaitGroup
 
 func do() {
-    time.Sleep(1 * time.Second)
-    count++
-    // 通知协程执行完毕
-    wg.Done()
+	time.Sleep(1 * time.Second)
+	count++
+	// 通知协程执行完毕
+	wg.Done()
 }
 
 // 1秒后打印出10（不保证一定为0)
 func main() {
-    n := 10
+	n := 10
 	for i := 0; i < n; i++ {
 		// 记录新增一个协程
 		wg.Add(1)
@@ -86,23 +86,23 @@ var mux sync.Mutex
 var wg sync.WaitGroup
 
 func doCount() {
-    time.Sleep(1 * time.Second)
-    // 加锁
-    mux.Lock()
-    count++
-    // 释放锁
-    mux.Unlock()
-    wg.Done()
+	time.Sleep(1 * time.Second)
+	// 加锁
+	mux.Lock()
+	count++
+	// 释放锁
+	mux.Unlock()
+	wg.Done()
 }
 
 func main() {
-    n := 1000
+	n := 1000
 	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go doCount()
-    }
-    wg.Wait()
-    fmt.Println(count)
+	}
+	wg.Wait()
+	fmt.Println(count)
 }
 ```
 
@@ -129,11 +129,11 @@ type Counter struct {
 }
 
 func (c *Counter) Add(num int) {
-    // 加锁
-    c.mu.Lock()
+	// 加锁
+	c.mu.Lock()
 	c.count = c.count + num
-    // 释放锁
-    c.mu.Unlock()
+	// 释放锁
+	c.mu.Unlock()
 }
 
 func doCount(counter *Counter, wg *sync.WaitGroup) {
