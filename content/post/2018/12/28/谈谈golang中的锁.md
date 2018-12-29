@@ -154,4 +154,49 @@ func main() {
 }
 ```
 
-到这里， 就介绍完了go中的互斥锁。等等…也就是说，还有另一种锁？那是当然啦。考虑一种使用场景，较少的协程对某一资源执行`写`操作，而更多的协程执行`读`操作，采用`sync.Mutex`即互斥锁，会导致每一次对资源的访问，无论是读还是写，都会阻塞。
+到这里， 就介绍完了go中的互斥锁。等等…也就是说，还有另一种锁？那是当然啦。考虑一种使用场景，较少的协程对某一资源执行`写`操作，而更多的协程执行`读`操作，采用`sync.Mutex`即互斥锁，会导致每一次对资源的访问，无论是读还是写，都会阻塞。实际上，执行读操作的时候，并不会对资源进行更改，所以应该允许其他协程同时读取资源(可重入锁)，且不允许其他协程`写`。而在`写`的时候，应该限制其他协程的`读`与`写`（这里读写互斥，是因为要防止协程读到不应存在的中间态）。这里就使用到了go提供的`sync.RWMutex`(读写锁)。
+
+使用方法如下:
+``` go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+type MultiCounter struct {
+	store map[string]int
+	rw    sync.RWMutex
+}
+
+func (m *MultiCounter) Add(key string, num int) {
+	m.rw.Lock()
+	m.store[key] = m.store[key] + num
+	m.rw.Unlock()
+}
+
+func (m *MultiCounter) Read(key string) int {
+	m.rw.RLock()
+	defer m.rw.RUnlock()
+	return m.store[key]
+}
+
+func doCount(counter *MultiCounter, wg *sync.WaitGroup) {
+	wg.Add(1)
+	time.Sleep(1 * time.Second)
+	counter.Add("a", 1)
+	wg.Done()
+}
+
+func main() {
+	wg := &sync.WaitGroup{}
+	counter := &MultiCounter{store: make(map[string]int)}
+	for i := 0; i < 1000; i++ {
+		go doCount(counter, wg)
+	}
+	wg.Wait()
+	fmt.Println(counter.Read("a"))
+}
+```
