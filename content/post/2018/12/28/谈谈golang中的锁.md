@@ -3,7 +3,7 @@ title: "谈谈golang中的锁"
 date: 2018-12-28T15:26:58+08:00
 tags: ["golang", "并发", "锁"]
 categories: ["golang"]
-draft: true
+draft: false
 ---
 
 得益于go的goroutine，go的并发变得十分容易，只需要`go`关键字，就可以启动一个新的协程。
