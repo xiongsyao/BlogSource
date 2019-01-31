@@ -43,6 +43,7 @@ r.set('hello', 'world')
 RESP协议中，不同类型的响应信息，会以不同的字符开头，比如上例中，`+OK\r\n`就以`+`开头。
 
 + 简单字符串(Simple Strings)响应会以"+"开头
+  
     >+OK\r\n
 
 + 错误(Errors)响应会以"-"开头
