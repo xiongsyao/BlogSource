@@ -41,14 +41,22 @@ r.set('hello', 'world')
 
 ### 响应信息
 RESP协议中，不同类型的响应信息，会以不同的字符开头，比如上例中，`+OK\r\n`就以`+`开头。
+
 + 简单字符串(Simple Strings)响应会以"+"开头
-  > +OK\r\n
+    >+OK\r\n
+
 + 错误(Errors)响应会以"-"开头
-  > -ERR unkown command 'ST'\r\n
+
+    > -ERR unkown command 'ST'\r\n
+
 + 数字(Integer)响应会以":"开头
-  > :2\r\n
+
+    > :2\r\n
+
 + 大字符串(Bulk Strings)会以"$"开头，并且随之标出字符串字节数
-  > $13\r\nHello, World!\r\n
+
+    >$13\r\nHello, World!\r\n
+
 + 数组类型(Arrays)类似与请求信息的序列化一致（在`HGETALL``LRANGE``MGET`命令中会返回)。
 
 ## 实例
