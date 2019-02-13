@@ -48,7 +48,7 @@ Redis**默认的**会将快照文件存储在当前进程的工作目录中的du
     当设置了主从模式时，Redis会在复制初始化时进行自动快照。
 
 ###  AOF持久化怎么开启？如何去除冗余命令？
-默认情况下Redis没有开启AOF方式的持久化，可以通过appendonly参数启用: `appendonly yes`。开启AOF持久化后每执行一条会更改Redis中数据的命令，就会将该命令写入硬盘的AOF文件，AOF文件的保存位置与RDB文件的位置一致，通过dir和appendfilename设置目录和文件名，默认为appendonly.conf。
+默认情况下Redis没有开启AOF方式的持久化，可以通过appendonly参数启用: `appendonly yes`。开启AOF持久化后每执行一条会更改Redis中数据的命令，就会将该命令写入硬盘的AOF文件，AOF文件的保存位置与RDB文件的位置一致，通过dir和appendfilename设置目录和文件名，默认为appendonly.aof。
 
 AOF文件以纯文本的形式记录Redis命令(**这里指RESP协议化的命令**)。随着执行命令越来越多，文件也会越来越大，中间会记录冗余的命令(例如对同一个键的多次SET操作)。通过在配置文件中更改设置，可以做到满足条件时，Redis自动重写AOF文件:
 ```
