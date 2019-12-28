@@ -1,6 +1,6 @@
 [submodule "public"]
 	path = public
-	url = git@github.com:xiongsyao/xiongsyao.github.io.git
+	url = git@github.com:xsymphony/xsymphony.github.io.git
 [submodule "themes/maupassant-hugo"]
 	path = themes/maupassant-hugo
 	url = https://github.com/rujews/maupassant-hugo.git

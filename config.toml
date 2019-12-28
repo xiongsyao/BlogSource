@@ -1,24 +1,30 @@
-baseURL = "https://xiongsyao.github.io/"
+baseURL = "https://xsymphony.github.io/"
 languageCode = "zh-CH"
 title = "Matrix"
 theme = "maupassant-hugo"
 
 preserveTaxonomyNames = true
 disablePathToLower = true
-
+hasCJKLanguage = true
+summaryLength = 140
 
 [author]
     name = "matrix"
+
+[markup]
+  [markup.highlight]
+    lineNos = true
+    style = "github"
 
 [params]
     author = "matrix"
     keywords = "golang,python"
 
-[params.utteranc]
-    enable = true
-    repo = "xiongsyao/comments"
-    issueTerm = "pathname"
-    theme = "github-light"
+    [params.utteranc]
+        enable = true
+        repo = "xsymphony/comments"
+        issueTerm = "pathname"
+        theme = "github-light"
 
 [menu]
 
